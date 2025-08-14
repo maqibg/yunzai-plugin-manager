@@ -43,7 +43,7 @@ const REPOS = [
   { name: 'GamePush-Plugin', url: 'https://github.com/rainbowwarmth/GamePush-Plugin.git', target: 'plugins/GamePush-Plugin' },
   { name: 'GT-Manual-Plugin', url: 'https://github.com/misaka20002/GT-Manual-Plugin.git', target: 'plugins/GT-Manual-Plugin', depth: 1 },
   { name: 'Guoba-Plugin', url: 'https://github.com/guoba-yunzai/guoba-plugin.git', target: 'plugins/Guoba-Plugin', depth: 1 },
-  { name: 'miao-plugin（设置远程为 GitHub 源）', url: 'https://github.com/yoimiya-kokomi/miao-plugin', target: 'plugins/miao-plugin', action: 'remoteSetUrl', remote: 'origin' },
+  { name: 'miao-plugin', url: 'https://github.com/yoimiya-kokomi/miao-plugin', target: 'plugins/miao-plugin', depth: 1 },
   { name: 'mora-plugin（Gitee）', url: 'https://gitee.com/Rrrrrrray/mora-plugin.git', target: 'plugins/mora-plugin', depth: 1 },
 ];
 
@@ -182,11 +182,20 @@ async function checkDeps() {
   REPOS.forEach((r, i) => {
     console.log(`[${i + 1}] ${r.name} -> ${r.target} (${r.url})`);
   });
+  // 提示“全选”特殊项
+  console.log('[0] 全选（拉取全部仓库，按清单顺序）');
 
   let indices = [];
   while (indices.length === 0) {
-    const ans = (await ask('\n请输入要拉取的编号（单选如 "1"，多选如 "1|3|2"）：')).trim();
-    indices = normalizeSelection(ans, REPOS.length);
+    // 支持：0 / all / 全选 / * 表示“全选”
+    const ans = (await ask('\n请输入要拉取的编号（单选如 "1"，多选如 "1|3|2"，全选输入 "0"/"all"/"全选"/"*"）：')).trim();
+    const lowered = ans.toLowerCase();
+    if (['0', 'all', '*', '全选'].includes(lowered)) {
+      // 全选：严格按清单顺序拉取
+      indices = REPOS.map((_, i) => i);
+    } else {
+      indices = normalizeSelection(ans, REPOS.length);
+    }
     if (indices.length === 0) console.log('输入无效，请重新输入。');
   }
 
