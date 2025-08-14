@@ -4,15 +4,15 @@
 
 ## 特色
 
-- 纯单文件：`clone-and-install.js`，无需任何额外配置文件。
-- 跨平台：支持 Linux 与 Windows（Node.js 运行）。
+- 纯单文件：`clone-and-install.cjs`，无需任何额外配置文件。
+- 跨平台：支持 Linux 与 Windows（Node.cjs 运行）。
 - 交互选择：输入 `1` 单选，`1|3|2` 多选（按输入顺序依次克隆），支持 `0`/`all`/`全选`/`*` 全选（按清单顺序）。
 - 安全稳健：已存在的 Git 目录执行 `git pull --ff-only`；非空且非 Git 目录跳过，避免破坏现有文件。
 - 依赖自检：启动前检查 `git` 与 `pnpm` 是否可用并提示安装方式。
 
 ## 依赖要求
 
-- Node.js：版本 >= 16。
+- Node.cjs：版本 >= 16。
 - Git：可执行 `git --version`。
 - pnpm：可执行 `pnpm --version`（缺失时可通过 `npm i -g pnpm` 安装）。
 
@@ -25,15 +25,15 @@
 - Linux/macOS：
 
 ```bash
-node ./clone-and-install.js
+node ./clone-and-install.cjs
 # 如需通过脚本文件直接执行：
-chmod +x ./clone-and-install.js && ./clone-and-install.js
+chmod +x ./clone-and-install.cjs && ./clone-and-install.cjs
 ```
 
 - Windows（PowerShell/CMD）：
 
 ```powershell
-node .\clone-and-install.js
+node .\clone-and-install.cjs
 ```
 
 3) 根据提示输入编号并确认，等待所有仓库拉取完成后，脚本会在当前目录执行一次 `pnpm i`。
@@ -45,21 +45,21 @@ node .\clone-and-install.js
 - Linux/macOS（curl）：
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/maqibg/yunzai-plugin-manager/HEAD/clone-and-install.js -o clone-and-install.js \
-  && node ./clone-and-install.js
+curl -fsSL https://raw.githubusercontent.com/maqibg/yunzai-plugin-manager/HEAD/clone-and-install.cjs -o clone-and-install.cjs \
+  && node ./clone-and-install.cjs
 ```
 
 - Linux/macOS（wget）：
 
 ```bash
-wget -qO clone-and-install.js https://raw.githubusercontent.com/maqibg/yunzai-plugin-manager/HEAD/clone-and-install.js \
-  && node ./clone-and-install.js
+wget -qO clone-and-install.cjs https://raw.githubusercontent.com/maqibg/yunzai-plugin-manager/HEAD/clone-and-install.cjs \
+  && node ./clone-and-install.cjs
 ```
 
 - Windows PowerShell：
 
 ```powershell
-iwr -useb https://raw.githubusercontent.com/maqibg/yunzai-plugin-manager/HEAD/clone-and-install.js -OutFile clone-and-install.js; node .\clone-and-install.js
+iwr -useb https://raw.githubusercontent.com/maqibg/yunzai-plugin-manager/HEAD/clone-and-install.cjs -OutFile clone-and-install.cjs; node .\clone-and-install.cjs
 ```
 
 希望执行后自动清理脚本文件，可使用以下命令：
@@ -67,15 +67,37 @@ iwr -useb https://raw.githubusercontent.com/maqibg/yunzai-plugin-manager/HEAD/cl
 - Linux/macOS（curl，执行后删除本地脚本）：
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/maqibg/yunzai-plugin-manager/HEAD/clone-and-install.js -o ci.js \
-  && node ./ci.js && rm -f ./ci.js
+curl -fsSL https://raw.githubusercontent.com/maqibg/yunzai-plugin-manager/HEAD/clone-and-install.cjs -o ci.cjs \
+  && node ./ci.cjs && rm -f ./ci.cjs
 ```
 
-- Windows PowerShell（执行后删除本地脚本）：
+ - Windows PowerShell（执行后删除本地脚本）：
 
-```powershell
-iwr -useb https://raw.githubusercontent.com/maqibg/yunzai-plugin-manager/HEAD/clone-and-install.js -OutFile ci.js; node .\ci.js; del .\ci.js
-```
+ ```powershell
+ iwr -useb https://raw.githubusercontent.com/maqibg/yunzai-plugin-manager/HEAD/clone-and-install.cjs -OutFile ci.cjs; node .\ci.cjs; del .\ci.cjs
+ ```
+
+ ### Windows 通用下载方式（推荐）
+
+ - CMD/PowerShell（优先系统自带 `curl.exe`）：
+
+ ```cmd
+ curl.exe -fsSL https://raw.githubusercontent.com/maqibg/yunzai-plugin-manager/HEAD/clone-and-install.cjs -o clone-and-install.cjs && node .\clone-and-install.cjs
+ ```
+
+ - 多重兜底（顺序尝试 `curl.exe` → .NET WebClient → `certutil`）：
+
+ ```cmd
+ (curl.exe -fsSL "https://raw.githubusercontent.com/maqibg/yunzai-plugin-manager/HEAD/clone-and-install.cjs" -o "clone-and-install.cjs") ^
+   || (powershell -NoProfile -Command "$u='https://raw.githubusercontent.com/maqibg/yunzai-plugin-manager/HEAD/clone-and-install.cjs';$o='clone-and-install.cjs';[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12;(New-Object Net.WebClient).DownloadFile($u,$o)") ^
+   || (certutil -urlcache -split -f "https://raw.githubusercontent.com/maqibg/yunzai-plugin-manager/HEAD/clone-and-install.cjs" "clone-and-install.cjs") && node .\clone-and-install.cjs
+ ```
+
+ - 如果你的项目 `package.cjson` 中有 `"type":"module"`（ESM 项目），请将脚本改名为 `.cjs` 后再运行：
+
+ ```cmd
+ ren .\clone-and-install.cjs clone-and-install.cjs && node .\clone-and-install.cjs
+ ```
 
 ## 交互说明
 
@@ -98,6 +120,15 @@ iwr -useb https://raw.githubusercontent.com/maqibg/yunzai-plugin-manager/HEAD/cl
 
 说明：部分仓库使用浅克隆 `--depth=1`，少量仓库指定分支（如 `-b build` 或 `--branch main3`）。
 
+## ESM 项目注意事项（`require is not defined` 报错）
+
+- 报错现象：在包含 `"type": "module"` 的项目目录下执行 `.cjs` 脚本，Node 会将其视为 ESModule，从而出现 `ReferenceError: require is not defined in ES module scope`。
+- 解决方式（推荐）：
+  - 将脚本重命名为 `.cjs` 再运行：
+    - `ren .\clone-and-install.cjs clone-and-install.cjs && node .\clone-and-install.cjs`
+  - 或在非 ESM 目录运行脚本（注意脚本内 `target` 为相对路径，会相对于当前工作目录）。
+  - 不建议为了运行脚本而修改项目的 `package.cjson` 中的 `type` 字段。
+
 ## 行为细节
 
 - 克隆顺序：严格按你的输入顺序依次处理。
@@ -116,7 +147,7 @@ iwr -useb https://raw.githubusercontent.com/maqibg/yunzai-plugin-manager/HEAD/cl
 
 ## 自定义与扩展
 
-本工具为单文件实现，配置位于脚本顶部 `REPOS` 数组（在 `clone-and-install.js` 内）。你可以：
+本工具为单文件实现，配置位于脚本顶部 `REPOS` 数组（在 `clone-and-install.cjs` 内）。你可以：
 
 - 添加/删除仓库：增删 `REPOS` 数组项（包含 `name/url/target`，可选 `depth/branch`）。
 - 自定义目标路径：`target` 为相对路径，相对于脚本运行目录。

@@ -4,6 +4,7 @@
  * 脚本用途：在当前工作目录内，交互选择并按顺序 git clone 指定仓库到指定相对路径；全部完成后执行一次 pnpm i。
  * 兼容平台：Linux / Windows（Node.js 单文件，无外部依赖）
  * 运行环境：Node >= 16，已安装 git 与 pnpm
+ * 模块类型：若当前目录的 package.json 含有 "type": "module"，请将本文件重命名为 .cjs 再执行（如：clone-and-install.cjs）。
  * 注意事项：脚本本身不产生任何额外文件；仅按配置克隆到目标路径。
  */
 
